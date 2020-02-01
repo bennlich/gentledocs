@@ -1,0 +1,15 @@
+{
+  "name": "jargondocs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "deploy": "cp gentleplants.config.js config.js && ./deploy.sh && cp localhost.config.js config.js",
+    "develop": "cp localhost.config.js config.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
