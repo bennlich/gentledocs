@@ -10,8 +10,8 @@ svgContainer.style.height = `${window.innerHeight}px`;
 // A place to keep track of the currently in-use text input element
 let currentEditInput = null;
 
-// This is the function that draws all the text. We're going to call this whenever
-// a new piece of text gets added to the database.
+// This is the function that draws all the text. We're going to rerender the entire screen
+// whenever a new piece of text gets added to the database.
 async function render() {
   // Delete all the existing text elements
   svgContainer.querySelectorAll('.jargon-container').forEach((el) => el.remove());
@@ -29,11 +29,12 @@ async function render() {
   });
 }
 
-// This function creates the text input element when you click on the page.
+// This function creates the text input element. We trigger it when you click on the page.
 let onClick = (e) => {
   let initialValue = "";
+  // If there's already a text input element
   if (currentEditInput) {
-    // If there's already a text input element, save the text that's already typed in there
+    // Save the text that's already typed in there
     initialValue = currentEditInput.value;
     // Remove the existing text input element
     currentEditInput.remove();
@@ -48,7 +49,7 @@ let onClick = (e) => {
     <input type="text" style="position: absolute; top: ${y}px; left: ${x}px;" value="${initialValue}"></input>
   `;
 
-  // When the Enter key is pressed, submit the entry to the database
+  // When the Enter key is pressed, submit the entry to the database, and remove the input element
   newEditInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
       let newJargon = {
@@ -83,7 +84,7 @@ db.sync(config.remotePouchUrl, { live: true })
   .on('complete', () => console.log('Sync complete'))
   .on('error', (e) => console.log(e));
 
-// Render everything
+// Render everything the first time
 render();
 
 // Helper function for wiping the database clean
