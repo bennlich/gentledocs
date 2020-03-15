@@ -1,5 +1,6 @@
 import config from '../config.js';
 import { CoordinateSystem } from './CoordinateSystem.js';
+import { migrate } from './migrations.js';
 
 let coordSystem = new CoordinateSystem();
 coordSystem.registerEventListeners(document);
@@ -106,4 +107,18 @@ let clearDB = window.clearDB = async () => {
   let docs = await db.allDocs({include_docs: true});
   console.log(docs);
   docs.rows.forEach((row) => db.remove(row.doc));
-}
+};
+
+let showDB = window.showDB = async () => {
+  let docs = await db.allDocs({include_docs: true});
+  console.log(docs.rows.map((r) => r.doc));
+};
+
+let migrateAllDocs = window.migrateAllDocs = async() => {
+  let docs = await db.allDocs({include_docs: true});
+  await Promise.all(docs.rows.map((row) => {
+    let migratedDoc = migrate(row.doc);
+    return db.put(migratedDoc);
+  }));
+  console.log("Done migrating docs.");
+};
