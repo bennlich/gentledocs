@@ -1,4 +1,9 @@
 import config from '../config.js';
+import { CoordinateSystem } from './CoordinateSystem.js';
+
+let coordSystem = new CoordinateSystem();
+coordSystem.registerEventListeners(document);
+coordSystem.onChange(() => updateCoords());
 
 let db = new PouchDB('jargon');
 
@@ -7,25 +12,34 @@ let svgContainer = document.querySelector('#text-container');
 svgContainer.style.width = `${window.innerWidth}px`;
 svgContainer.style.height = `${window.innerHeight}px`;
 
+let textGroup = html`<g class="jargon-group"></g>`;
+svgContainer.appendChild(textGroup);
+
 // A place to keep track of the currently in-use text input element
 let currentEditInput = null;
+
+// Transform textGroup coordinates for pan and zoom
+function updateCoords() {
+  let { x, y } = coordSystem.transform({ x: 0, y: 0 });
+  textGroup.setAttribute('transform', `translate(${x},${y}) scale(${coordSystem.scale})`);
+}
 
 // This is the function that draws all the text. We're going to rerender the entire screen
 // whenever a new piece of text gets added to the database.
 async function render() {
   // Delete all the existing text elements
-  svgContainer.querySelectorAll('.jargon-container').forEach((el) => el.remove());
+  textGroup.querySelectorAll('.jargon-el').forEach((el) => el.remove());
 
   // Fetch all the docs (i.e. entries) in the database
   let docs = await db.allDocs({ include_docs: true });
-  
+
   // Create a new text element for each doc
   docs.rows.forEach((row) => {
-    let { text, x, y } = row.doc;
+    let { x, y, text } = row.doc;
     let textEl = html`
-      <text class="jargon-container" y="${y}px" x="${x}px">${text}</text>
+      <text class="jargon-el" y="${y}px" x="${x}px">${text}</text>
     `;
-    svgContainer.appendChild(textEl);
+    textGroup.appendChild(textEl);
   });
 }
 
