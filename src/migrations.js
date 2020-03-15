@@ -5,10 +5,18 @@ let migrations = [
       doc.schemaVersion = 1;
       return doc;
     }
+  },
+  {
+    description: 'Add fontSize',
+    migrateFn: (doc) => {
+      doc.schemaVersion = 2;
+      doc.fontSize = 14;
+      return doc;
+    }
   }
 ];
 
-window.latestSchemaVersion = migrations.length;
+let latestSchemaVersion = window.latestSchemaVersion = migrations.length;
 
 let migrate = (doc) => {
   if (!doc.schemaVersion) {
@@ -24,4 +32,4 @@ let migrate = (doc) => {
   }
 };
 
-export { migrate };
+export { migrate, latestSchemaVersion };

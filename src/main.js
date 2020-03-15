@@ -1,12 +1,15 @@
 import config from '../config.js';
 import { CoordinateSystem } from './CoordinateSystem.js';
 import { migrate } from './migrations.js';
+import { saveNewJargon } from './jargonModel.js';
 
 let coordSystem = new CoordinateSystem();
 coordSystem.registerEventListeners(document);
 coordSystem.onChange(() => updateCoords());
 
 let db = new PouchDB('jargon');
+
+let baseFontSize = 14;
 
 // Create the SVG container. This is what will contain the text.
 let svgContainer = document.querySelector('#text-container');
@@ -39,8 +42,9 @@ async function render() {
   // Create a new text element for each doc
   docs.rows.forEach((row) => {
     let { x, y, text } = row.doc;
+    let fontSize = row.doc.fontSize;
     let textEl = html`
-      <text class="jargon-el" y="${y}px" x="${x}px">${text}</text>
+      <text class="jargon-el" y="${y}px" x="${x}px" font-size="${fontSize}px">${text}</text>
     `;
     textGroup.appendChild(textEl);
   });
@@ -69,14 +73,12 @@ let onClick = (e) => {
   // When the Enter key is pressed, submit the entry to the database, and remove the input element
   newEditInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-      let newJargon = {
-        _id: new Date().toISOString(),
+      saveNewJargon(db, {
         text: newEditInput.value,
+        fontSize: baseFontSize,
         x: x,
         y: y
-      };
-
-      db.put(newJargon);
+      });
       newEditInput.remove();
       currentEditInput = null;
     }
