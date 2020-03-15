@@ -28,11 +28,13 @@ function updateCoords() {
 // This is the function that draws all the text. We're going to rerender the entire screen
 // whenever a new piece of text gets added to the database.
 async function render() {
-  // Delete all the existing text elements
-  textGroup.querySelectorAll('.jargon-el').forEach((el) => el.remove());
-
   // Fetch all the docs (i.e. entries) in the database
   let docs = await db.allDocs({ include_docs: true });
+
+  console.log(`Rendering ${docs.rows.length} jargon elements.`);
+
+  // Delete all the existing text elements
+  svgContainer.querySelectorAll('.jargon-el').forEach((el) => el.remove());
 
   // Create a new text element for each doc
   docs.rows.forEach((row) => {
