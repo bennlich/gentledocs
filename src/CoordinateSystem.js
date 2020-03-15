@@ -9,6 +9,7 @@ class CoordinateSystem {
 
     this.callbacks = [];
     this.mousedown = false;
+    this.panning = false;
   }
 
   transform(worldCoord) {
@@ -22,12 +23,14 @@ class CoordinateSystem {
 
   registerEventListeners(element) {
     // Pan
-    element.addEventListener('mousedown', () => {
+    element.addEventListener('pointerdown', () => {
       this.mousedown = true;
     });
 
-    document.addEventListener('mousemove', (event) => {
+    document.addEventListener('pointermove', (event) => {
       if (this.mousedown && this.prevMouseX && this.prevMouseY) {
+        this.panning = true;
+
         this.translateX += event.clientX - this.prevMouseX;
         this.translateY += event.clientY - this.prevMouseY;
         this.emitChange();
@@ -35,10 +38,16 @@ class CoordinateSystem {
 
       this.prevMouseX = event.clientX;
       this.prevMouseY = event.clientY;
-    })
+    });
 
-    document.addEventListener('mouseup', () => {
+    document.addEventListener('pointerup', (event) => {
+      if (this.panning) {
+        // Stop the event from triggering any other listeners (e.g. the listener that creates a new text input)
+        event.stopPropagation();
+      }
+
       this.mousedown = false;
+      this.panning = false;
     });
 
     // Zoom
