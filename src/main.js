@@ -66,6 +66,7 @@ let onClick = (e) => {
   // Create the new text input element
   let x = e.clientX;
   let y = e.clientY;
+  let worldCoords = coordSystem.invert({ x, y });
   let newEditInput = currentEditInput = html`
     <input type="text" style="position: absolute; top: ${y}px; left: ${x}px;" value="${initialValue}"></input>
   `;
@@ -76,8 +77,8 @@ let onClick = (e) => {
       saveNewJargon(db, {
         text: newEditInput.value,
         fontSize: baseFontSize,
-        x: x,
-        y: y
+        x: worldCoords.x,
+        y: worldCoords.y
       });
       newEditInput.remove();
       currentEditInput = null;

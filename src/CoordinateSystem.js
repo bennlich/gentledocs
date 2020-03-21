@@ -21,6 +21,15 @@ class CoordinateSystem {
     };
   }
 
+  invert(screenCoord) {
+    let screenX = screenCoord.x;
+    let screenY = screenCoord.y;
+    return {
+      x: screenX / this.scale - this.translateX,
+      y: screenY / this.scale - this.translateY
+    };
+  }
+
   registerEventListeners(element) {
     // Pan
     element.addEventListener('pointerdown', () => {
