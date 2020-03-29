@@ -24,8 +24,7 @@ let currentEditInput = null;
 
 // Transform textGroup coordinates for pan and zoom
 function updateCoords() {
-  let { x, y } = coordSystem.transform({ x: 0, y: 0 });
-  textGroup.setAttribute('transform', `translate(${x},${y}) scale(${coordSystem.scale})`);
+  textGroup.setAttribute('transform', `translate(${coordSystem.originX},${coordSystem.originY}) scale(${coordSystem.scale})`);
 }
 
 // This is the function that draws all the text. We're going to rerender the entire screen

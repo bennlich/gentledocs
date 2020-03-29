@@ -1,8 +1,8 @@
 class CoordinateSystem {
   constructor() {
     this.scale = 1;
-    this.translateX = 0;
-    this.translateY = 0;
+    this.originX = 0;
+    this.originY = 0;
 
     this.prevMouseX = null;
     this.prevMouseY = null;
@@ -12,21 +12,21 @@ class CoordinateSystem {
     this.panning = false;
   }
 
-  transform(worldCoord) {
-    let worldX = worldCoord.x;
-    let worldY = worldCoord.y;
-    return {
-      x: (worldX + this.translateX) * this.scale,
-      y: (worldY + this.translateY) * this.scale
-    };
-  }
+  // transform(worldCoord) {
+  //   let worldX = worldCoord.x;
+  //   let worldY = worldCoord.y;
+  //   return {
+  //     x: (worldX + this.originX) * this.scale,
+  //     y: (worldY + this.originY) * this.scale
+  //   };
+  // }
 
   invert(screenCoord) {
     let screenX = screenCoord.x;
     let screenY = screenCoord.y;
     return {
-      x: screenX / this.scale - this.translateX,
-      y: screenY / this.scale - this.translateY
+      x: screenX / this.scale - this.originX,
+      y: screenY / this.scale - this.originY
     };
   }
 
@@ -40,8 +40,8 @@ class CoordinateSystem {
       if (this.mousedown && this.prevMouseX && this.prevMouseY) {
         this.panning = true;
 
-        this.translateX += event.clientX - this.prevMouseX;
-        this.translateY += event.clientY - this.prevMouseY;
+        this.originX += (event.clientX - this.prevMouseX);
+        this.originY += (event.clientY - this.prevMouseY);
         this.emitChange();
       }
 
@@ -61,10 +61,15 @@ class CoordinateSystem {
 
     // Zoom
     document.addEventListener('wheel', (event) => {
+      let prevScale = this.scale;
       if (event.deltaY < 0) {
         this.scale += 0.1;
+        this.originX += (event.clientX - this.originX) * (1 - this.scale / prevScale);
+        this.originY += (event.clientY - this.originY) * (1 - this.scale / prevScale);
       } else {
         this.scale -= 0.1;
+        this.originX += (event.clientX - this.originX) * (1 - this.scale / prevScale);
+        this.originY += (event.clientY - this.originY) * (1 - this.scale / prevScale);
       }
       this.emitChange();
     });
