@@ -3,7 +3,7 @@ import { CoordinateSystem } from './CoordinateSystem.js';
 import { migrate } from './migrations.js';
 import { saveNewJargon } from './jargonModel.js';
 
-let coordSystem = new CoordinateSystem();
+let coordSystem = window.coordSystem = new CoordinateSystem();
 coordSystem.registerEventListeners(document);
 coordSystem.onChange(() => updateCoords());
 
@@ -24,7 +24,7 @@ let currentEditInput = null;
 
 // Transform textGroup coordinates for pan and zoom
 function updateCoords() {
-  textGroup.setAttribute('transform', `translate(${coordSystem.originX},${coordSystem.originY}) scale(${coordSystem.scale})`);
+  textGroup.setAttribute('transform', `translate(${coordSystem.originX},${coordSystem.originY}) scale(${coordSystem.getZoom()})`);
 }
 
 // This is the function that draws all the text. We're going to rerender the entire screen
@@ -75,7 +75,7 @@ let onClick = (e) => {
     if (e.key === 'Enter') {
       saveNewJargon(db, {
         text: newEditInput.value,
-        fontSize: baseFontSize,
+        fontSize: baseFontSize / coordSystem.getZoom(),
         x: worldCoords.x,
         y: worldCoords.y
       });

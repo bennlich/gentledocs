@@ -1,6 +1,6 @@
 class CoordinateSystem {
   constructor() {
-    this.scale = 1;
+    this.scale = 0;
     this.originX = 0;
     this.originY = 0;
 
@@ -21,12 +21,16 @@ class CoordinateSystem {
   //   };
   // }
 
+  getZoom() {
+    return Math.pow(2, this.scale);
+  }
+
   invert(screenCoord) {
     let screenX = screenCoord.x;
     let screenY = screenCoord.y;
     return {
-      x: (screenX - this.originX) / this.scale,
-      y: (screenY - this.originY) / this.scale
+      x: (screenX - this.originX) / this.getZoom(),
+      y: (screenY - this.originY) / this.getZoom()
     };
   }
 
@@ -61,7 +65,6 @@ class CoordinateSystem {
 
     // Zoom
     document.addEventListener('wheel', (event) => {
-      let prevScale = this.scale;
       let oldMouseWorldCoord = this.invert({ x: event.clientX, y: event.clientY });
       if (event.deltaY < 0) {
         this.scale += 0.1;
@@ -69,8 +72,8 @@ class CoordinateSystem {
         this.scale -= 0.1;
       }
       let newMouseWorldCoord = this.invert({ x: event.clientX, y: event.clientY });
-      this.originX += (newMouseWorldCoord.x - oldMouseWorldCoord.x) * this.scale;
-      this.originY += (newMouseWorldCoord.y - oldMouseWorldCoord.y) * this.scale;
+      this.originX += (newMouseWorldCoord.x - oldMouseWorldCoord.x) * this.getZoom();
+      this.originY += (newMouseWorldCoord.y - oldMouseWorldCoord.y) * this.getZoom();
       this.emitChange();
     });
   }
