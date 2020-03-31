@@ -25,8 +25,8 @@ class CoordinateSystem {
     let screenX = screenCoord.x;
     let screenY = screenCoord.y;
     return {
-      x: screenX / this.scale - this.originX,
-      y: screenY / this.scale - this.originY
+      x: (screenX - this.originX) / this.scale,
+      y: (screenY - this.originY) / this.scale
     };
   }
 
