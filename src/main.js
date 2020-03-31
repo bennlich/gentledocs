@@ -67,7 +67,7 @@ let onClick = (e) => {
   let y = e.clientY;
   let worldCoords = coordSystem.invert({ x, y });
   let newEditInput = currentEditInput = html`
-    <input type="text" style="position: absolute; top: ${y}px; left: ${x}px;" value="${initialValue}"></input>
+    <input type="text" style="position: absolute; top: ${y}px; left: ${x}px; transform: translateY(-100%); padding: 0px; border: 0px;" value="${initialValue}"></input>
   `;
 
   // When the Enter key is pressed, submit the entry to the database, and remove the input element

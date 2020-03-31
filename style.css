@@ -1,4 +1,10 @@
 body {
   margin: 0px;
   overflow: hidden;
+  font-family: serif;
+  cursor: default;
+}
+
+input {
+  font-family: serif;
 }
