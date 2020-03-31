@@ -62,15 +62,15 @@ class CoordinateSystem {
     // Zoom
     document.addEventListener('wheel', (event) => {
       let prevScale = this.scale;
+      let oldMouseWorldCoord = this.invert({ x: event.clientX, y: event.clientY });
       if (event.deltaY < 0) {
         this.scale += 0.1;
-        this.originX += (event.clientX - this.originX) * (1 - this.scale / prevScale);
-        this.originY += (event.clientY - this.originY) * (1 - this.scale / prevScale);
       } else {
         this.scale -= 0.1;
-        this.originX += (event.clientX - this.originX) * (1 - this.scale / prevScale);
-        this.originY += (event.clientY - this.originY) * (1 - this.scale / prevScale);
       }
+      let newMouseWorldCoord = this.invert({ x: event.clientX, y: event.clientY });
+      this.originX += (newMouseWorldCoord.x - oldMouseWorldCoord.x) * this.scale;
+      this.originY += (newMouseWorldCoord.y - oldMouseWorldCoord.y) * this.scale;
       this.emitChange();
     });
   }
